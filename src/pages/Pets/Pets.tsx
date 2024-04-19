@@ -6,12 +6,22 @@ import { Card } from '../../components/common/Card'
 import { getPets } from '../../services/pets/getPets'
 import { Skeleton } from '../../components/common/Skeleton'
 import { useQuery } from '@tanstack/react-query'
+import { Pagination } from '../../components/common/Pagination'
+import { useSearchParams } from 'react-router-dom'
 
 export function Pets() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['get-pets'],
-    queryFn: () => getPets(),
-  })
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const urlParams = {
+    page: searchParams.get('Page') ? Number
+  }
+
+  function changePage(page: number) {
+    setSearchParams((params) => {
+      params.set('page', String(page))
+      return params
+    })
+  }
 
   return (
     <Grid>
@@ -30,6 +40,13 @@ export function Pets() {
             />
           ))}
         </main>
+        {data?.currentPage && (
+            <Pagination 
+              currentPage={data.currentPage} 
+              totalPages={data.totalPages}
+              onPageChange={(number) => console.log(number)}
+            />
+          )}
       </div>
     </Grid>
   )
