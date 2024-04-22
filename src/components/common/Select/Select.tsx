@@ -6,18 +6,19 @@ interface ISelect extends SelectHTMLAttributes<HTMLSelectElement> {
     options: {
         value: string
         text: string
-    }
+    }[]
 }
 export function Select({label, options, ...rest}: ISelect) {
-    return 
+    return (
     <div className={styles.selectGroup}>
         <label>{label}</label>
-        <select className={styles.selectBase}>
-            {queryOptions.map((option) => ( 
-                <option key={option.value} value={option}>
+        <select {...rest}>
+            {options.map((option) => ( 
+                <option key={option.value} value={option.value}>
                     {option.text}
                 </option>
             ))}
         </select>
     </div>
+    )
 }
