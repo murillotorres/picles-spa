@@ -6,6 +6,8 @@ import styles from './Shelter.module.css'
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHookFormMask } from "use-mask-input";
+import { toast } from "sonner";
+import { updateShelter } from "../../../services/shelter/updateShelter";
 
 const shelterSchema = z.object({
     name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres.').max(30, 'Nome dever no máximo 30 caracteres.'),
@@ -29,8 +31,27 @@ export function Shelter() {
 
     const registerWithMask = useHookFormMask(register)
 
-    function submit({name}: ShelterSchema) {
-        console.log(name)
+    async function submit({ name, email, phone, whatsApp }: ShelterSchema) {
+        const toastId = toast.loading('Salvando dados')
+
+        try {
+            await updateShelter({
+                name, 
+                email, 
+                phone: phone.replace(/\D/g, ''),
+                whatsApp: whatsApp.replace(/\D/g, ''),
+            })
+
+            toast.success('Dados salvo com sucesso', {
+                id: toastId,
+                closeButton: true,
+            })
+        } catch {
+            toast.error('Não foi possível salvar os dados', {
+                id: toastId,
+                closeButton: true,
+            })
+        }
     }
 
     return (
